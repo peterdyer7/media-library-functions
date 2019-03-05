@@ -12,6 +12,8 @@
   "dependencies": {
     "@google-cloud/vision": "^0.25.0",
     "child-process-promise": "^2.2.1",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
     "firebase-admin": "~7.0.0",
     "firebase-functions": "^2.2.0",
     "uuid-v4": "^0.1.0"

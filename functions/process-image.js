@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp();
+//admin.initializeApp();
 const db = admin.firestore();
 const vision = require('@google-cloud/vision');
 const spawn = require('child-process-promise').spawn;
