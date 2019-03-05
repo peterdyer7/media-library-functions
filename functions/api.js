@@ -100,14 +100,14 @@ app.delete('/users', async (req, res) => {
     }
     // delete users from Firestore
     const querySnapshot = await db.collection('users').get();
-    querySnapshot.forEach(async (doc) => {
+    for (const doc of querySnapshot.docs) {
       if (doc.data().email !== 'peter_dyer@hotmail.com') {
         await db
           .collection('users')
           .doc(doc.id)
           .delete();
       }
-    });
+    }
     res.status(200).end();
   } catch (err) {
     console.log('[DELETE /users]', err.message);
@@ -119,7 +119,7 @@ app.get('/properties', async (req, res) => {
   try {
     const properties = {};
     const querySnapshot = await db.collection('properties').get();
-    querySnapshot.forEach(async (doc) => {
+    querySnapshot.forEach((doc) => {
       properties[doc.id] = doc.data();
     });
     res.status(200).json({ data: properties });
@@ -148,12 +148,12 @@ app.post('/properties', async (req, res) => {
 app.delete('/properties', async (req, res) => {
   try {
     const querySnapshot = await db.collection('properties').get();
-    querySnapshot.forEach(async (doc) => {
+    for (const doc of querySnapshot.docs) {
       await db
         .collection('properties')
         .doc(doc.id)
         .delete();
-    });
+    }
     res.status(200).end();
   } catch (err) {
     console.log('[DELETE /properties]', err.message);
@@ -180,7 +180,7 @@ app.get('/settings', async (req, res) => {
   try {
     const settings = {};
     const querySnapshot = await db.collection('settings').get();
-    querySnapshot.forEach(async (doc) => {
+    querySnapshot.forEach((doc) => {
       settings[doc.id] = doc.data();
     });
     res.status(200).json({ data: settings });
@@ -277,7 +277,7 @@ app.get('/images', async (req, res) => {
   try {
     const images = {};
     const querySnapshot = await db.collection('images').get();
-    querySnapshot.forEach(async (doc) => {
+    querySnapshot.forEach((doc) => {
       images[doc.id] = doc.data();
     });
     res.status(200).json({ data: images });
@@ -402,44 +402,44 @@ app.delete('/files', async (req, res) => {
     let querySnapshot;
     // images
     querySnapshot = await db.collection('images').get();
-    querySnapshot.forEach(async (doc) => {
+    for (const doc of querySnapshot.docs) {
       await db
         .collection('images')
         .doc(doc.id)
         .delete();
-    });
+    }
     // exif
     querySnapshot = await db.collection('exif').get();
-    querySnapshot.forEach(async (doc) => {
+    for (const doc of querySnapshot.docs) {
       await db
         .collection('exif')
         .doc(doc.id)
         .delete();
-    });
+    }
     // labels
     querySnapshot = await db.collection('labels').get();
-    querySnapshot.forEach(async (doc) => {
+    for (const doc of querySnapshot.docs) {
       await db
         .collection('labels')
         .doc(doc.id)
         .delete();
-    });
+    }
     // safeSearch
     querySnapshot = await db.collection('safeSearch').get();
-    querySnapshot.forEach(async (doc) => {
+    for (const doc of querySnapshot.docs) {
       await db
         .collection('safeSearch')
         .doc(doc.id)
         .delete();
-    });
+    }
     // webDetection
     querySnapshot = await db.collection('webDetection').get();
-    querySnapshot.forEach(async (doc) => {
+    for (const doc of querySnapshot.docs) {
       await db
         .collection('webDetection')
         .doc(doc.id)
         .delete();
-    });
+    }
     res.status(200).end();
   } catch (err) {
     console.log('[DELETE /files]', err.message);
