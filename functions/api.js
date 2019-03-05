@@ -244,7 +244,7 @@ app.post('/images', async (req, res) => {
       )}?alt=media&token=${
         res1[0].metadata.metadata.firebaseStorageDownloadTokens
       }`;
-      const dateNow = Date.now().toString();
+      const dateNow = new Date();
       const res2 = await db
         .collection('images')
         .doc(image.id)
@@ -269,6 +269,104 @@ app.post('/images', async (req, res) => {
     res.status(200).json({ data: images });
   } catch (err) {
     console.log('[POST /images]', err.message);
+    res.sendStatus(500);
+  }
+});
+
+app.get('/images', async (req, res) => {
+  try {
+    const images = {};
+    const querySnapshot = await db.collection('images').get();
+    querySnapshot.forEach(async (doc) => {
+      images[doc.id] = doc.data();
+    });
+    res.status(200).json({ data: images });
+  } catch (err) {
+    console.log('[GET /images]', err.message);
+    res.sendStatus(500);
+  }
+});
+
+app.get('/images/:id', async (req, res) => {
+  try {
+    let image = {};
+    const doc = await db
+      .collection('images')
+      .doc(req.params.id)
+      .get();
+    image = doc.data();
+    res.status(200).json({ data: image });
+  } catch (err) {
+    console.log('[GET /images/:id]', err.message);
+    res.sendStatus(500);
+  }
+});
+
+app.delete('/images/:id', async (req, res) => {
+  try {
+    let image = {};
+    const doc = await db
+      .collection('images')
+      .doc(req.params.id)
+      .get();
+    image = doc.data();
+
+    // delete files from storage (if the file exists)
+    try {
+      await admin
+        .storage()
+        .bucket()
+        .file(`${image.id}/thumb_${image.name}`)
+        .delete();
+    } catch (e) {
+      console.log(`${image.id}/thumb_${image.name} could not be deleted.`);
+    }
+    try {
+      await admin
+        .storage()
+        .bucket()
+        .file(`${image.id}/small_${image.name}`)
+        .delete();
+    } catch (e) {
+      console.log(`${image.id}/small_${image.name} could not be deleted.`);
+    }
+    try {
+      await admin
+        .storage()
+        .bucket()
+        .file(`${image.id}/${image.name}`)
+        .delete();
+    } catch (e) {
+      console.log(`${image.id}/${image.name} could not be deleted.`);
+    }
+    // delete image from Firestore
+    await db
+      .collection('images')
+      .doc(image.id)
+      .delete();
+    // exif
+    await db
+      .collection('exif')
+      .doc(image.id)
+      .delete();
+    // labels
+    await db
+      .collection('labels')
+      .doc(image.id)
+      .delete();
+    // safeSearch
+    await db
+      .collection('safeSearch')
+      .doc(image.id)
+      .delete();
+    // webDetection
+    await db
+      .collection('webDetection')
+      .doc(image.id)
+      .delete();
+    res.status(200).end();
+  } catch (err) {
+    console.log('[GET /images/:id]', err.message);
     res.sendStatus(500);
   }
 });
