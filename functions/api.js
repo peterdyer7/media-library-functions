@@ -228,6 +228,7 @@ app.post('/images', async (req, res) => {
         uploadType: 'media',
         metadata: {
           contentType: image.type,
+          contentDisposition: `attachment; filename=${image.fileName}`,
           metadata: {
             firebaseStorageDownloadTokens: token
           }
